@@ -15,11 +15,21 @@ const io = new Server(server, {
 }); //circuit
 
 io.on("connection", (socket) => {
-  console.log(`user connected`);
-  console.log(`Id ${socket.id}`);
-  socket.emit("welcome", `welcome to the server,${socket.id}`); //it will send msg to the particular circuit
+  // console.log(`user connected`);
+  // console.log(`Id ${socket.id}`);
+  // socket.emit("welcome", `welcome to the server,${socket.id}`); //it will send msg to the particular circuit
   // broadcast is used to send to other circuites;
-  socket.broadcast.emit("welcome", `${socket.id} has just joined the server`);
+  // socket.broadcast.emit("welcome", `${socket.id} has just joined the server`);
+
+  console.log(`user connected ,${socket.id}`);
+  socket.on("message", ({ message, roomId }) => {
+    console.log(message, roomId);
+    io.to(roomId).emit("recieve-message", message);
+  });
+
+  socket.on("join-room", (roomName) => {
+    socket.join(roomName);
+  });
 });
 
 app.get("/", (req, res) => {
